@@ -103,4 +103,90 @@ describe('./src/lerp-angle.spec.ts', () => {
       assert.deepStrictEqual(lerpAngle(350, 10, 1 / 4), 355)
     })
   })
+
+  describe('mathematical properties', () => {
+    it('satisfies symmetry property: lerpAngle(a,b,t) = lerpAngle(b,a,1-t)', () => {
+      const testCases = [
+        [350, 10, 0.3],
+        [45, 135, 0.7],
+        [200, 340, 0.25],
+        [0, 270, 0.8],
+      ]
+
+      testCases.forEach(([a, b, t]) => {
+        const forward = lerpAngle(a, b, t)
+        const reverse = lerpAngle(b, a, 1 - t)
+        assert.approximately(forward, reverse, 1e-10, `Failed for angles ${a}, ${b} with t=${t}`)
+      })
+    })
+
+    it('handles 180-degree ambiguity consistently', () => {
+      // Test consistency across different 180° pairs - all should use positive direction
+      const pairs180 = [
+        [0, 180],
+        [30, 210],
+        [60, 240],
+        [90, 270],
+      ]
+      const results = pairs180.map(([a, b]) => lerpAngle(a, b, 0.5))
+
+      // All 180° differences should result in angles that are consistent with positive direction
+      assert.deepStrictEqual(results, [90, 120, 150, 180])
+    })
+
+    it('maintains direction consistency for exactly 180°', () => {
+      // All exactly 180° differences should use same tie-breaking rule (positive direction)
+      const cases = [
+        [0, 180],
+        [45, 225],
+        [90, 270],
+        [135, 315],
+      ]
+      const directions = cases.map(([a, b]) => {
+        const early = lerpAngle(a, b, 0.1)
+        const late = lerpAngle(a, b, 0.9)
+        return early < late ? 'positive' : 'negative'
+      })
+
+      // All should be 'positive' due to our tie-breaking rule
+      assert.ok(
+        directions.every((d) => d === 'positive'),
+        `Inconsistent directions: ${directions.join(' ')}`,
+      )
+    })
+  })
+
+  describe('floating-point precision edge cases', () => {
+    it('handles very small angle differences', () => {
+      assert.approximately(lerpAngle(0, 1e-10, 0.5), 5e-11, 1e-12)
+      assert.approximately(lerpAngle(359.999_999_9, 0.000_000_1, 0.5), 0, 1e-6)
+    })
+
+    it('handles near-180-degree differences', () => {
+      // Just under 180° should go short way
+      assert.approximately(lerpAngle(0, 179.999_999_9, 0.5), 89.999_999_95, 1e-6)
+      // Just over 180° should go long way (with adjustment)
+      assert.approximately(lerpAngle(0, 180.000_000_1, 0.5), 270.000_000_05, 1e-6)
+    })
+
+    it('handles floating-point precision at boundaries', () => {
+      // Test angles very close to 0/360 boundary
+      assert.approximately(lerpAngle(359.999_999_9, 0.000_000_1, 0.5), 0, 1e-6)
+      assert.approximately(lerpAngle(0.000_000_1, 359.999_999_9, 0.5), 0, 1e-6)
+    })
+  })
+
+  describe('large angle handling', () => {
+    it('handles multiple full rotations correctly', () => {
+      assert.deepStrictEqual(lerpAngle(720, 810, 0.5), 45) // 720°=0°, 810°=90°
+      assert.deepStrictEqual(lerpAngle(-720, -630, 0.5), 45) // -720°=0°, -630°=90°
+      assert.deepStrictEqual(lerpAngle(1080, 1170, 0.5), 45) // 1080°=0°, 1170°=90°
+    })
+
+    it('maintains shortest path with large angles', () => {
+      // Even with large multiples, should still take shortest path
+      assert.deepStrictEqual(lerpAngle(710, 800, 0.5), 35) // 710°=350°, 800°=80°, shortest path
+      assert.deepStrictEqual(lerpAngle(-10, 80, 0.5), 35) // -10°=350°, shortest path to 80°
+    })
+  })
 })
