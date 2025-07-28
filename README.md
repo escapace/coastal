@@ -152,14 +152,19 @@ findLastIndex(numbers, (x) => x > 10) // -1
 
 #### remove
 
-Removes elements from an array in-place where the predicate returns false.
+Removes elements from an array in-place where the predicate returns true.
 
 ```typescript
 import { remove } from 'coastal'
 
 const numbers = [1, 2, 3, 4, 5]
-remove(numbers, (x) => x % 2 === 0) // keeps even numbers
-console.log(numbers) // [2, 4]
+remove(numbers, (x) => x % 2 === 0) // removes even numbers
+console.log(numbers) // [1, 3, 5]
+
+// Predicate receives value, index, and array
+const items = ['a', 'b', 'c', 'd']
+remove(items, (value, index) => index % 2 === 0) // removes elements at even indices
+console.log(items) // ['b', 'd']
 ```
 
 ### Data Structures

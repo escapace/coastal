@@ -3,31 +3,31 @@ import { describe, it, expect } from 'vitest'
 import { remove } from './remove'
 
 describe('remove', () => {
-  it('should remove elements that do not match the predicate', () => {
+  it('should remove elements that match the predicate', () => {
     const array = [1, 2, 3, 4, 5]
     const predicate = (value: number) => value % 2 === 0
 
     remove(array, predicate)
 
-    expect(array).toEqual([2, 4])
+    expect(array).toEqual([1, 3, 5])
   })
 
-  it('should keep all elements when all match the predicate', () => {
+  it('should remove all elements when all match the predicate', () => {
     const array = [2, 4, 6, 8]
     const predicate = (value: number) => value % 2 === 0
 
     remove(array, predicate)
 
-    expect(array).toEqual([2, 4, 6, 8])
+    expect(array).toEqual([])
   })
 
-  it('should remove all elements when none match the predicate', () => {
+  it('should keep all elements when none match the predicate', () => {
     const array = [1, 3, 5, 7]
     const predicate = (value: number) => value % 2 === 0
 
     remove(array, predicate)
 
-    expect(array).toEqual([])
+    expect(array).toEqual([1, 3, 5, 7])
   })
 
   it('should handle empty array', () => {
@@ -45,7 +45,7 @@ describe('remove', () => {
 
     remove(array, predicate)
 
-    expect(array).toEqual(['banana', 'cherry'])
+    expect(array).toEqual(['apple', 'date'])
   })
 
   it('should work with object arrays', () => {
@@ -58,10 +58,7 @@ describe('remove', () => {
 
     remove(array, predicate)
 
-    expect(array).toEqual([
-      { age: 25, name: 'Alice' },
-      { age: 30, name: 'Charlie' },
-    ])
+    expect(array).toEqual([{ age: 17, name: 'Bob' }])
   })
 
   it('should mutate the original array', () => {
@@ -71,7 +68,37 @@ describe('remove', () => {
 
     remove(array, predicate)
 
-    expect(originalArray).toEqual([4, 5])
+    expect(originalArray).toEqual([1, 2, 3])
     expect(array).toBe(originalArray)
+  })
+
+  it('should pass index and array to predicate', () => {
+    const array = [10, 20, 30, 40, 50]
+    const predicateArguments: Array<{ index: number; value: number }> = []
+
+    const predicate = (value: number, index: number, array_: number[]) => {
+      predicateArguments.push({ index, value })
+      expect(array_).toBe(array) // Verify the array reference is passed
+      return index === 1 || index === 3
+    }
+
+    remove(array, predicate)
+
+    expect(array).toEqual([10, 30, 50])
+    expect(predicateArguments).toHaveLength(5)
+    expect(predicateArguments[0]).toEqual({ index: 4, value: 50 })
+    expect(predicateArguments[1]).toEqual({ index: 3, value: 40 })
+    expect(predicateArguments[2]).toEqual({ index: 2, value: 30 })
+    expect(predicateArguments[3]).toEqual({ index: 1, value: 20 })
+    expect(predicateArguments[4]).toEqual({ index: 0, value: 10 })
+  })
+
+  it('should remove elements based on index', () => {
+    const array = ['a', 'b', 'c', 'd', 'e']
+    const predicate = (_value: string, index: number) => index % 2 === 0
+
+    remove(array, predicate)
+
+    expect(array).toEqual(['b', 'd'])
   })
 })
