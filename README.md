@@ -161,3 +161,51 @@ const numbers = [1, 2, 3, 4, 5]
 remove(numbers, (x) => x % 2 === 0) // keeps even numbers
 console.log(numbers) // [2, 4]
 ```
+
+### Data Structures
+
+#### DirectAddressTable
+
+A direct address table providing O(1) lookup time for non-negative integer keys. The table is immutable after construction.
+
+```typescript
+import { DirectAddressTable } from 'coastal'
+
+// Basic usage
+const table = new DirectAddressTable([0, 2, 5], ['a', 'b', 'c'])
+table.get(0) // 'a'
+table.get(1) // undefined
+table.get(2) // 'b'
+table.get(5) // 'c'
+
+// Duplicate keys - last value wins
+const table2 = new DirectAddressTable([1, 2, 1], ['first', 'second', 'third'])
+table2.get(1) // 'third'
+
+// Invalid keys throw errors during construction
+try {
+  new DirectAddressTable([-1, 0], ['a', 'b']) // throws Error
+} catch (e) {
+  console.log(e.message) // "Invalid key: -1. Keys must be non-negative integers"
+}
+
+try {
+  new DirectAddressTable([1.5, 2], ['a', 'b']) // throws Error
+} catch (e) {
+  console.log(e.message) // "Invalid key: 1.5. Keys must be non-negative integers"
+}
+```
+
+**Performance characteristics:**
+
+- Time complexity: O(1) lookup
+- Space complexity: O(max_key) where max_key is the largest key value
+- Memory usage scales with the largest key, not the number of stored values
+
+**Edge cases:**
+
+- Empty key arrays: Throws RangeError
+- Mismatched array lengths: Keys without corresponding values are assigned undefined
+- Invalid keys: Throws Error for negative numbers or non-integers
+- Large key values: Uses memory proportional to the largest key value
+- Duplicate keys: Last value overwrites previous values
