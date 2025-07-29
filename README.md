@@ -167,6 +167,39 @@ remove(items, (value, index) => index % 2 === 0) // removes elements at even ind
 console.log(items) // ['b', 'd']
 ```
 
+#### upsert
+
+Updates an existing array element or inserts a new one based on a predicate match.
+
+```typescript
+import { upsert } from 'coastal'
+
+// Insert when no match found
+const users = [{ id: 1, name: 'Alice' }]
+upsert(users, { id: 2, name: 'Bob' }, (user) => user.id === 2)
+console.log(users) // [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]
+
+// Update when match found
+const products = [{ id: 1, price: 100 }]
+upsert(products, { id: 1, price: 150 }, (product) => product.id === 1)
+console.log(products) // [{ id: 1, price: 150 }]
+
+// Works with primitives
+const numbers = [1, 2, 3]
+upsert(numbers, 99, (n) => n > 5) // no match, appends
+console.log(numbers) // [1, 2, 3, 99]
+
+const tags = ['urgent', 'bug']
+upsert(tags, 'fixed', (tag) => tag === 'bug') // match found, replaces
+console.log(tags) // ['urgent', 'fixed']
+```
+
+**Behavior:**
+
+- Inserts at end of array when predicate finds no match
+- Replaces first matching element when predicate finds a match
+- Mutates the original array
+
 ### Data Structures
 
 #### DirectAddressTable
