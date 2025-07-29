@@ -8,7 +8,7 @@
  * @param predicate - Function that returns true for the element to replace
  */
 export const upsert = <T>(array: T[], value: T, predicate: (item: T) => boolean) => {
-  const index = array.findIndex(predicate)
+  const index = array.findLastIndex(predicate)
 
   if (index === -1) {
     array.push(value)

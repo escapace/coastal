@@ -33,7 +33,7 @@ describe('upsert', () => {
     expect(array[0]).not.toBe(existingAction)
   })
 
-  it('should replace first matching item when multiple items match predicate', () => {
+  it('should replace last matching item when multiple items match predicate', () => {
     const action1: TestAction = { id: '1', isAsync: true, type: 'plugin' }
     const action2: TestAction = { id: '2', isAsync: false, type: 'plugin' }
     const array: TestAction[] = [action1, action2]
@@ -43,8 +43,8 @@ describe('upsert', () => {
     upsert(array, newValue, predicate)
 
     expect(array).toHaveLength(2)
-    expect(array[0]).toBe(newValue)
-    expect(array[1]).toBe(action2)
+    expect(array[0]).toBe(action1)
+    expect(array[1]).toBe(newValue)
   })
 
   it('should append to end when predicate does not match any item in populated array', () => {
