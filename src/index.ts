@@ -1,4 +1,5 @@
 export { adjustAngle } from './adjust-angle'
+export { chunk } from './chunk'
 export { clamp } from './clamp'
 export { DirectAddressTable } from './direct-address-table'
 export { findLastIndex } from './find-last-index'
