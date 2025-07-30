@@ -219,6 +219,58 @@ console.log(tags) // ['urgent', 'fixed']
 - Replaces first matching element when predicate finds a match
 - Mutates the original array
 
+#### mapChunkBy
+
+Maps over an array using dynamically-sized chunks, where each chunk size is determined by examining the current element and its position. Similar to `Array.map()` but operates on variable-length chunks instead of individual elements.
+
+```typescript
+import { mapChunkBy } from 'coastal'
+
+// Fixed chunk size
+const numbers = [1, 2, 3, 4, 5, 6]
+mapChunkBy(
+  numbers,
+  () => 2,
+  (chunk, index) => ({ index, sum: chunk.reduce((a, b) => a + b, 0) }),
+)
+// [{ index: 0, sum: 3 }, { index: 2, sum: 7 }, { index: 4, sum: 11 }]
+
+// Dynamic sizing based on content
+const words = ['hi', 'hello', 'a', 'world', 'test']
+mapChunkBy(
+  words,
+  (word) => (word.length > 3 ? 2 : 1),
+  (chunk, index) => ({ startIndex: index, text: chunk.join(' ') }),
+)
+// [{ startIndex: 0, text: 'hi' }, { startIndex: 1, text: 'hello a' }, { startIndex: 3, text: 'world test' }]
+
+// Text processing with sentence detection
+const words = ['Hello', 'world!', 'How', 'are', 'you?', 'Fine.']
+mapChunkBy(
+  words,
+  (_, index) => {
+    // Take words until punctuation or max 3 words
+    let count = 1
+    for (let i = index; i < Math.min(index + 3, words.length); i++) {
+      if (words[i].includes('!') || words[i].includes('?') || words[i].includes('.')) {
+        return i - index + 1
+      }
+      if (i > index) count++
+    }
+    return count
+  },
+  (chunk) => chunk.join(' '),
+)
+// ['Hello world!', 'How are you?', 'Fine.']
+```
+
+**Edge cases:**
+
+- Empty array: Returns empty array
+- Chunk size exceeds remaining elements: Uses all remaining elements
+- Invalid chunk size: Throws Error for non-positive integers, decimals, NaN, or Infinity
+- Source array is not modified
+
 ### Data Structures
 
 #### DirectAddressTable
