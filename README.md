@@ -138,37 +138,6 @@ clamp(-5, 0, 10) // 0
 clamp(5, 0, 10) // 5
 ```
 
-#### chunk
-
-Splits an array into smaller arrays of specified size.
-
-```typescript
-import { chunk } from 'coastal'
-
-chunk([1, 2, 3, 4, 5, 6], 3) // [[1, 2, 3], [4, 5, 6]]
-chunk([1, 2, 3, 4, 5], 2) // [[1, 2], [3, 4], [5]]
-chunk(['a', 'b', 'c', 'd'], 3) // [['a', 'b', 'c'], ['d']]
-chunk([1, 2], 5) // [[1, 2]] - chunk size larger than array
-```
-
-**Edge cases:**
-
-- Empty array: Returns empty array
-- Remainder elements: Final chunk contains remaining elements
-- Invalid size: Throws Error for non-positive integers, decimals, NaN, or Infinity
-
-#### findLastIndex
-
-Finds the index of the last element in an array that satisfies a testing function.
-
-```typescript
-import { findLastIndex } from 'coastal'
-
-const numbers = [1, 2, 3, 4, 3, 2, 1]
-findLastIndex(numbers, (x) => x === 3) // 4
-findLastIndex(numbers, (x) => x > 10) // -1
-```
-
 #### remove
 
 Removes elements from an array in-place where the predicate returns true.
