@@ -84,7 +84,7 @@ normalize([1, -1]) // [Infinity, -Infinity] - zero sum case
 
 #### normalizeAngle
 
-Normalizes an angle to the range [0, 360).
+Normalizes an angle to the range \[0, 360).
 
 ```typescript
 import { normalizeAngle } from 'coastal'
@@ -287,3 +287,325 @@ try {
 - Invalid keys: Throws Error for negative numbers or non-integers
 - Large key values: Uses memory proportional to the largest key value
 - Duplicate keys: Last value overwrites previous values
+
+# API
+
+## function adjustAngle [↗](src/adjust-angle.ts#L15-L29 'adjustAngle')
+
+Adjusts two angles to minimize interpolation distance (shortest arc)
+
+Mathematically proven to produce minimal interpolation distance with |adjusted_b - adjusted_a| ≤ 180°. Properly manages wrap-around at 0°/360° boundary and handles 180° ambiguity with positive direction tie-breaking rule for deterministic behavior. Essential for consistent interpolation in graphics, robotics, and navigation systems.
+
+```typescript
+adjustAngle: (a: number, b: number) => [number, number]
+```
+
+### Parameters
+
+| Parameter | Type              | Description             |
+| --------- | ----------------- | ----------------------- |
+| `a`       | <pre>number</pre> | First angle in degrees  |
+| `b`       | <pre>number</pre> | Second angle in degrees |
+
+### Returns
+
+Tuple of adjusted angles that minimize interpolation distance
+
+## function clamp [↗](src/clamp.ts#L12-L17 'clamp')
+
+Constrains a number to fall within specified bounds.
+
+Uses nested Math functions for optimal performance compared to conditional branches.
+
+```typescript
+clamp: (value: number, min: number, max: number) => number
+```
+
+### Parameters
+
+| Parameter | Type              | Description                                |
+| --------- | ----------------- | ------------------------------------------ |
+| `value`   | <pre>number</pre> | The number to constrain                    |
+| `min`     | <pre>number</pre> | The lower bound (inclusive, must be ≤ max) |
+| `max`     | <pre>number</pre> | The upper bound (inclusive, must be ≥ min) |
+
+### Returns
+
+The constrained number, or the appropriate bound if outside range
+
+### Throws
+
+Error when `min > max`
+
+## function lerp [↗](src/lerp.ts#L8 'lerp')
+
+Linear interpolation between two values
+
+```typescript
+lerp: (v0: number, v1: number, t: number) => number
+```
+
+### Parameters
+
+| Parameter | Type              | Description                           |
+| --------- | ----------------- | ------------------------------------- |
+| `v0`      | <pre>number</pre> | Start value                           |
+| `v1`      | <pre>number</pre> | End value                             |
+| `t`       | <pre>number</pre> | Interpolation factor (0 = v0, 1 = v1) |
+
+### Returns
+
+Interpolated value
+
+## function lerpAngle [↗](src/lerp-angle.ts#L19-L20 'lerpAngle')
+
+Linear interpolation between two angles using shortest path
+
+Uses shortest path interpolation via adjustAngle to ensure optimal angular transitions. Satisfies symmetry property: lerpAngle(a,b,t) = lerpAngle(b,a,1-t). Consistent 180° tie-breaking ensures predictable results and handles all edge cases including floating-point precision boundaries. Suitable for production use in graphics, robotics, and navigation systems.
+
+```typescript
+lerpAngle: (a: number, b: number, t: number) => number
+```
+
+### Parameters
+
+| Parameter | Type              | Description                         |
+| --------- | ----------------- | ----------------------------------- |
+| `a`       | <pre>number</pre> | Start angle in degrees              |
+| `b`       | <pre>number</pre> | End angle in degrees                |
+| `t`       | <pre>number</pre> | Interpolation factor (0 = a, 1 = b) |
+
+### Returns
+
+Interpolated angle normalized to \[0, 360) range
+
+## function lerpArray [↗](src/lerp-array.ts#L11-L18 'lerpArray')
+
+Linear interpolation between two arrays element-wise
+
+```typescript
+lerpArray: (a: number[], b: number[], t: number) => number[]
+```
+
+### Parameters
+
+| Parameter | Type                 | Description                                              |
+| --------- | -------------------- | -------------------------------------------------------- |
+| `a`       | <pre>number\[]</pre> | First array                                              |
+| `b`       | <pre>number\[]</pre> | Second array                                             |
+| `t`       | <pre>number</pre>    | Interpolation factor (0 = first array, 1 = second array) |
+
+### Returns
+
+New array with interpolated values. Length equals minimum of input array lengths. Returns empty array when either input array is empty.
+
+## function mapChunkBy [↗](src/map-chunk-by.ts#L20-L50 'mapChunkBy')
+
+Maps over an array using dynamically-sized chunks, where each chunk size is determined by examining the current element and its position. Similar to Array.map() but operates on variable-length chunks of the array instead of individual elements.
+
+```typescript
+export declare function mapChunkBy<T, R>(
+  array: T[],
+  getChunkSize: (currentValue: T, index: number) => number,
+  transform: (chunk: T[], startIndex: number) => R,
+): R[]
+```
+
+### Type Parameters
+
+| Parameter | Description                                |
+| --------- | ------------------------------------------ |
+| `T`       | The type of elements in the input array    |
+| `R`       | The type of elements in the returned array |
+
+### Parameters
+
+| Parameter      | Type                                                  | Description                                                                                                                                                                               |
+| -------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `array`        | <pre>T\[]</pre>                                       | The input array to process                                                                                                                                                                |
+| `getChunkSize` | <pre>(currentValue: T, index: number) => number</pre> | Function that determines the size of the next chunk. Receives the current element and its index, returns the number of elements to include in this chunk. Must return a positive integer. |
+| `transform`    | <pre>(chunk: T\[], startIndex: number) => R</pre>     | Function that transforms each chunk and returns a result value. Receives the chunk array and the starting index of the chunk.                                                             |
+
+### Returns
+
+Array of transformed results, where each element is the result of calling the transform function on a dynamically-sized chunk.
+
+### Throws
+
+Error when getChunkSize returns a value that is not a positive integer
+
+## function normalize [↗](src/normalize.ts#L9-L13 'normalize')
+
+Normalizes an array of numbers so they sum to 1
+
+```typescript
+normalize: (values: number[]) => number[]
+```
+
+### Parameters
+
+| Parameter | Type                 | Description                   |
+| --------- | -------------------- | ----------------------------- |
+| `values`  | <pre>number\[]</pre> | Array of numbers to normalize |
+
+### Returns
+
+Normalized array where all values sum to 1. Returns empty array for empty input. For arrays with zero sum, returns array containing Infinity or NaN values.
+
+## function normalizeAngle [↗](src/normalize-angle.ts#L6 'normalizeAngle')
+
+Normalizes an angle to the range \[0, 360)
+
+```typescript
+normalizeAngle: (angle: number) => number
+```
+
+### Parameters
+
+| Parameter | Type              | Description      |
+| --------- | ----------------- | ---------------- |
+| `angle`   | <pre>number</pre> | Angle in degrees |
+
+### Returns
+
+Normalized angle between 0 and 360 degrees
+
+## function remove [↗](src/remove.ts#L9-L16 'remove')
+
+Mutates an array by removing all elements where the predicate returns true. Elements are evaluated from right to left to maintain correct indices during removal.
+
+```typescript
+remove: <T>(array: T[], predicate: (value: T, index: number, array: T[]) => boolean) => void
+```
+
+### Type Parameters
+
+| Parameter | Description                |
+| --------- | -------------------------- |
+| `T`       | The type of array elements |
+
+### Parameters
+
+| Parameter   | Type                                                         | Description                                                           |
+| ----------- | ------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `array`     | <pre>T\[]</pre>                                              | The array to modify in-place                                          |
+| `predicate` | <pre>(value: T, index: number, array: T\[]) => boolean</pre> | Function invoked for each element. Return true to remove the element. |
+
+## function sum [↗](src/sum.ts#L6 'sum')
+
+Calculates the sum of all numbers in an array
+
+```typescript
+sum: (values: number[]) => number
+```
+
+### Parameters
+
+| Parameter | Type                 | Description             |
+| --------- | -------------------- | ----------------------- |
+| `values`  | <pre>number\[]</pre> | Array of numbers to sum |
+
+### Returns
+
+Sum of all values in the array
+
+## function szudzik [↗](src/szudzik.ts#L8 'szudzik')
+
+Szudzik pairing function - maps two non-negative integers to a unique non-negative integer
+
+```typescript
+szudzik: (x: number, y: number) => number
+```
+
+### Parameters
+
+| Parameter | Type              | Description                                         |
+| --------- | ----------------- | --------------------------------------------------- |
+| `x`       | <pre>number</pre> | First integer (intended for non-negative integers)  |
+| `y`       | <pre>number</pre> | Second integer (intended for non-negative integers) |
+
+### Returns
+
+Unique integer representing the pair. For negative or non-integer inputs, produces deterministic results but not guaranteed to be unique or reversible.
+
+## function upsert [↗](src/upsert.ts#L10-L18 'upsert')
+
+Updates an existing array element or inserts a new one based on a predicate match. Mutates the original array.
+
+```typescript
+upsert: <T>(array: T[], value: T, predicate: (item: T) => boolean) => void
+```
+
+### Type Parameters
+
+| Parameter | Description                       |
+| --------- | --------------------------------- |
+| `T`       | The type of elements in the array |
+
+### Parameters
+
+| Parameter   | Type                            | Description                                           |
+| ----------- | ------------------------------- | ----------------------------------------------------- |
+| `array`     | <pre>T\[]</pre>                 | The array to modify                                   |
+| `value`     | <pre>T</pre>                    | The value to insert or use as replacement             |
+| `predicate` | <pre>(item: T) => boolean</pre> | Function that returns true for the element to replace |
+
+## class DirectAddressTable [↗](src/direct-address-table.ts#L8-L57 'DirectAddressTable')
+
+A direct address table data structure providing O(1) lookup time for non-negative integer keys. Uses an array for storage where keys serve as indices, enabling constant-time access. The table is immutable after construction and creates sparse arrays when keys have gaps.
+
+```typescript
+export declare class DirectAddressTable<T>
+```
+
+### Type Parameters
+
+| Parameter | Description                            |
+| --------- | -------------------------------------- |
+| `T`       | The type of values stored in the table |
+
+### new DirectAddressTable
+
+Creates a new direct address table from parallel arrays of keys and values. Space complexity is O(max_key) where max_key is the largest key value.
+
+```typescript
+constructor(keys: number[], values: T[]);
+```
+
+#### Parameters
+
+| Parameter | Type                 | Description                                                                                          |
+| --------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `keys`    | <pre>number\[]</pre> | Array of non-negative integer keys                                                                   |
+| `values`  | <pre>T\[]</pre>      | Array of values corresponding to each key. Keys without corresponding values are assigned undefined. |
+
+#### Throws
+
+1. RangeError When keys array is empty
+2. Error When keys contain negative numbers or non-integer values
+
+#### Remarks
+
+- Duplicate keys: Last value overwrites previous values for the same key - Memory usage scales with the largest key value, not the number of stored values - Invalid keys are rejected during construction
+
+### DirectAddressTable.get
+
+Retrieves the value associated with the specified key in O(1) time.
+
+```typescript
+get(key: number): T | undefined;
+```
+
+#### Parameters
+
+| Parameter | Type              | Description                |
+| --------- | ----------------- | -------------------------- |
+| `key`     | <pre>number</pre> | The numeric key to look up |
+
+#### Returns
+
+The value associated with the key, or undefined if the key doesn't exist or was never assigned a value
+
+#### Remarks
+
+- Returns undefined for keys outside the initialized range - No runtime validation is performed on the key parameter

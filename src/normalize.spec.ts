@@ -26,6 +26,6 @@ describe('./src/normalize.spec.ts', () => {
     assert.ok(result1.every((value) => Math.abs(value) === Infinity))
 
     const result2 = normalize([0, 0])
-    assert.ok(result2.every((value) => isNaN(value)))
+    assert.ok(result2.every((value) => Number.isNaN(value)))
   })
 })

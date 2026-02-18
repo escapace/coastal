@@ -23,7 +23,7 @@ describe('DirectAddressTable', () => {
   })
 
   it('should handle empty arrays', () => {
-    expect(() => new DirectAddressTable([], [])).toThrow()
+    expect(() => new DirectAddressTable([], [])).toThrowError('Invalid array length')
   })
 
   it('should handle single key-value pair', () => {
@@ -46,19 +46,19 @@ describe('DirectAddressTable', () => {
   })
 
   it('should throw error for negative keys', () => {
-    expect(() => new DirectAddressTable([-1, 0], ['a', 'b'])).toThrow(
+    expect(() => new DirectAddressTable([-1, 0], ['a', 'b'])).toThrowError(
       'Invalid key: -1. Keys must be non-negative integers',
     )
-    expect(() => new DirectAddressTable([0, -5, 2], ['a', 'b', 'c'])).toThrow(
+    expect(() => new DirectAddressTable([0, -5, 2], ['a', 'b', 'c'])).toThrowError(
       'Invalid key: -5. Keys must be non-negative integers',
     )
   })
 
   it('should throw error for non-integer keys', () => {
-    expect(() => new DirectAddressTable([1.5], ['value'])).toThrow(
+    expect(() => new DirectAddressTable([1.5], ['value'])).toThrowError(
       'Invalid key: 1.5. Keys must be non-negative integers',
     )
-    expect(() => new DirectAddressTable([0, 2.7], ['a', 'b'])).toThrow(
+    expect(() => new DirectAddressTable([0, 2.7], ['a', 'b'])).toThrowError(
       'Invalid key: 2.7. Keys must be non-negative integers',
     )
   })

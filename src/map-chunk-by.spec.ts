@@ -92,7 +92,7 @@ describe('mapChunkBy', () => {
         () => -5,
         (chunk) => chunk[0],
       )
-    }).toThrow('Invalid chunk size -5 at index 0. Chunk size must be a positive integer')
+    }).toThrowError('Invalid chunk size -5 at index 0. Chunk size must be a positive integer')
   })
 
   it('should throw error for zero chunk size', () => {
@@ -102,7 +102,7 @@ describe('mapChunkBy', () => {
         () => 0,
         (chunk) => chunk.length,
       )
-    }).toThrow('Invalid chunk size 0 at index 0. Chunk size must be a positive integer')
+    }).toThrowError('Invalid chunk size 0 at index 0. Chunk size must be a positive integer')
   })
 
   it('should process text with sentence-like chunking', () => {
@@ -203,7 +203,7 @@ describe('mapChunkBy', () => {
           throw new Error('transform error')
         },
       )
-    }).toThrow('transform error')
+    }).toThrowError('transform error')
   })
 
   it('should handle chunk size function throwing errors', () => {
@@ -215,7 +215,7 @@ describe('mapChunkBy', () => {
         },
         (chunk) => chunk,
       )
-    }).toThrow('size error')
+    }).toThrowError('size error')
   })
 
   it('should throw error for floating point chunk sizes', () => {
@@ -225,7 +225,7 @@ describe('mapChunkBy', () => {
         () => 2.7,
         (chunk) => chunk.length,
       )
-    }).toThrow('Invalid chunk size 2.7 at index 0. Chunk size must be a positive integer')
+    }).toThrowError('Invalid chunk size 2.7 at index 0. Chunk size must be a positive integer')
   })
 
   it('should throw error for NaN chunk size', () => {
@@ -235,7 +235,7 @@ describe('mapChunkBy', () => {
         () => NaN,
         (chunk) => chunk.length,
       )
-    }).toThrow('Invalid chunk size NaN at index 0. Chunk size must be a positive integer')
+    }).toThrowError('Invalid chunk size NaN at index 0. Chunk size must be a positive integer')
   })
 
   it('should throw error for Infinity chunk size', () => {
@@ -245,7 +245,7 @@ describe('mapChunkBy', () => {
         () => Infinity,
         (chunk) => chunk.length,
       )
-    }).toThrow('Invalid chunk size Infinity at index 0. Chunk size must be a positive integer')
+    }).toThrowError('Invalid chunk size Infinity at index 0. Chunk size must be a positive integer')
   })
 
   it('should handle transform returning undefined', () => {

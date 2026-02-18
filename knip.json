@@ -3,6 +3,7 @@
   "entry": [
     "{scripts,perf}/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
     "**/*.{test,spec,bench}.?(c|m)[jt]s?(x)",
+    "**/*.{test,spec}.?(c|m)[jt]s?(x)",
     "**/test/**/*.?(c|m)[jt]s?(x)",
     "eslint.config.mjs",
     "src/**/example*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,vue}",
@@ -13,7 +14,7 @@
     "vitest.config.ts"
   ],
   "ignore": ["**/*.d.+([a-zA-Z0-9]).ts", "**/*.d.ts", "lib/**"],
-  "ignoreBinaries": ["taze"],
+  "ignoreBinaries": ["taze", "ncu"],
   "ignoreDependencies": [
     "@commitlint/cli",
     "@microsoft/api-extractor",

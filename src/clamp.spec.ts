@@ -51,7 +51,7 @@ describe('clamp', () => {
   })
 
   it('should throw error when min > max', () => {
-    expect(() => clamp(5, 10, 1)).toThrow('min must be less than or equal to max')
-    expect(() => clamp(0, 5, -5)).toThrow('min must be less than or equal to max')
+    expect(() => clamp(5, 10, 1)).toThrowError('min must be less than or equal to max')
+    expect(() => clamp(0, 5, -5)).toThrowError('min must be less than or equal to max')
   })
 })
