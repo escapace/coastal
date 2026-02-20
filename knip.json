@@ -14,9 +14,10 @@
     "vitest.config.ts"
   ],
   "ignore": ["**/*.d.+([a-zA-Z0-9]).ts", "**/*.d.ts", "lib/**"],
-  "ignoreBinaries": ["taze", "ncu"],
+  "ignoreBinaries": ["ncu", "taze"],
   "ignoreDependencies": [
     "@commitlint/cli",
+    "@escapace/syncpack-configuration",
     "@microsoft/api-extractor",
     "eslint-config-escapace",
     "prettier",
