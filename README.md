@@ -470,6 +470,34 @@ normalizeAngle: (angle: number) => number
 
 Normalized angle between 0 and 360 degrees
 
+## function ownKeys [↗](src/own-keys.ts#L23-L42 'ownKeys')
+
+Returns own property names followed by own property symbols in standard JavaScript order.
+
+```typescript
+ownKeys: (value: object) => PropertyKey[]
+```
+
+### Parameters
+
+| Parameter | Type              | Description                                                 |
+| --------- | ----------------- | ----------------------------------------------------------- |
+| `value`   | <pre>object</pre> | The target object from which to retrieve own property keys. |
+
+### Returns
+
+Array of the object's own property keys, including both string and symbol keys. For objects without symbol properties, returns the names array directly cast to PropertyKey array. For objects with symbols, returns a new array containing names followed by symbols.
+
+### Remarks
+
+This function matches the ordering used by `Reflect.ownKeys()` for ordinary objects while avoiding the slower generic helper on hot plain-object paths that already need a materialized key array. For ordinary objects, keys are returned in this order:
+
+- Non-negative integer indexes in increasing numeric order (as strings)
+- Other string keys in the order of property creation
+- Symbol keys in the order of property creation
+
+The function includes both enumerable and non-enumerable properties. When the object has no symbol keys, the function reuses the names array directly for improved performance.
+
 ## function remove [↗](src/remove.ts#L9-L16 'remove')
 
 Mutates an array by removing all elements where the predicate returns true. Elements are evaluated from right to left to maintain correct indices during removal.
