@@ -475,7 +475,7 @@ Normalized angle between 0 and 360 degrees
 Returns own property names followed by own property symbols in standard JavaScript order.
 
 ```typescript
-ownKeys: (value: object) => PropertyKey[]
+ownKeys: (value: object) => Array<number | string | symbol>
 ```
 
 ### Parameters

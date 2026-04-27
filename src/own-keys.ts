@@ -20,7 +20,7 @@
  * objects without symbol properties, returns the names array directly cast to PropertyKey array.
  * For objects with symbols, returns a new array containing names followed by symbols.
  */
-export const ownKeys = (value: object): PropertyKey[] => {
+export const ownKeys = (value: object): Array<number | string | symbol> => {
   const ownNames = Object.getOwnPropertyNames(value)
   const ownSymbols = Object.getOwnPropertySymbols(value)
 
